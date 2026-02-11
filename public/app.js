@@ -2,7 +2,7 @@
 const API_URL =
   window.location.hostname === "localhost"
     ? "http://localhost:3000"
-    : "claude-rag-prototype-production.up.railway.app"; // Will use same domain in production
+    : "https://claude-rag-prototype-production.up.railway.app"; // Will use same domain in production
 
 // State
 let documents = [];
