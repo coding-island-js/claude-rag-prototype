@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RAG Prototype - Selective Retrieval Demo</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>📚 Document Retrieval Prototype</h1>
+        <p class="subtitle">
+          Comparing "Load All" vs "Smart Retrieval" with prompt caching
+        </p>
+        <div class="budget-bar">
+          <span>Budget: <strong id="budgetSpent">$0.00</strong> / $1.00</span>
+          <button class="reset-btn" onclick="resetSystem()">
+            Reset System
+          </button>
+        </div>
+      </header>
+
+      <!-- Upload Section -->
+      <section class="section">
+        <h2>1. Upload Documents</h2>
+        <div
+          class="upload-area"
+          onclick="document.getElementById('fileInput').click()"
+        >
+          <input type="file" id="fileInput" accept=".txt,.md" />
+          <div class="upload-prompt">
+            <span class="upload-icon">📄</span>
+            <p>Click to upload .txt or .md files</p>
+            <p class="upload-hint">One file at a time</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Document List -->
+      <section class="section">
+        <h2>2. Your Documents (<span id="docCount">0</span>)</h2>
+        <ul class="document-list" id="documentList">
+          <li class="empty-state">No documents uploaded yet</li>
+        </ul>
+      </section>
+
+      <!-- Query Section -->
+      <section class="section">
+        <h2>3. Ask a Question</h2>
+        <textarea
+          id="questionInput"
+          placeholder="Example: What's the opening range from UTG?"
+          rows="3"
+        ></textarea>
+        <div class="query-actions">
+          <button
+            class="btn btn-primary"
+            onclick="askQuestion('all')"
+            id="btnLoadAll"
+          >
+            ⚠️ Load All Docs
+          </button>
+          <button
+            class="btn btn-success"
+            onclick="askQuestion('smart')"
+            id="btnSmart"
+          >
+            ✨ Smart Retrieval
+          </button>
+        </div>
+      </section>
+
+      <!-- Results Section -->
+      <section
+        class="section results-section"
+        id="resultsSection"
+        style="display: none"
+      >
+        <h2>Results Comparison</h2>
+
+        <div class="results-grid">
+          <!-- Load All Results -->
+          <div class="result-card" id="loadAllResults" style="display: none">
+            <div class="result-header load-all">
+              <h3>⚠️ Load All Mode</h3>
+              <span class="mode-label">Current Problem</span>
+            </div>
+            <div class="answer-box" id="answerLoadAll"></div>
+            <div class="stats-grid">
+              <div class="stat">
+                <span class="stat-label">Docs Loaded</span>
+                <span class="stat-value" id="docsLoadAll">-</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Input Tokens</span>
+                <span class="stat-value" id="tokensLoadAll">-</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Cost</span>
+                <span class="stat-value" id="costLoadAll">-</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Time</span>
+                <span class="stat-value" id="timeLoadAll">-</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Smart Results -->
+          <div class="result-card" id="smartResults" style="display: none">
+            <div class="result-header smart">
+              <h3>✨ Smart Mode</h3>
+              <span class="mode-label">Our Solution</span>
+            </div>
+            <div class="answer-box" id="answerSmart"></div>
+            <div class="stats-grid">
+              <div class="stat">
+                <span class="stat-label">Docs Loaded</span>
+                <span class="stat-value" id="docsSmart">-</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Input Tokens</span>
+                <span class="stat-value" id="tokensSmart">-</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Cost</span>
+                <span class="stat-value cost-smart" id="costSmart">-</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Time</span>
+                <span class="stat-value" id="timeSmart">-</span>
+              </div>
+            </div>
+            <div class="cache-info" id="cacheInfo" style="display: none">
+              <strong>Cache Stats:</strong>
+              <span id="cacheDetails"></span>
+            </div>
+            <div class="selected-docs" id="selectedDocs" style="display: none">
+              <strong>Retrieved:</strong>
+              <span id="selectedDocsList"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comparison Summary -->
+        <div
+          class="comparison-summary"
+          id="comparisonSummary"
+          style="display: none"
+        >
+          <h3>💡 Improvement</h3>
+          <div class="improvements">
+            <div class="improvement-item">
+              <span class="improvement-label">Token Reduction:</span>
+              <span class="improvement-value" id="tokenReduction">-</span>
+            </div>
+            <div class="improvement-item">
+              <span class="improvement-label">Cost Savings:</span>
+              <span class="improvement-value" id="costSavings">-</span>
+            </div>
+            <div class="improvement-item">
+              <span class="improvement-label">Speed Improvement:</span>
+              <span class="improvement-value" id="speedImprovement">-</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
